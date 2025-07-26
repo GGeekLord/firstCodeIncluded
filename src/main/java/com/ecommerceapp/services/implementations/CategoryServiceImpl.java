@@ -49,13 +49,15 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public String deleteCategory(Long CategoryId) {
 
-        List<Category> categories = repository.findAll();
+        Category category = repository.findById(CategoryId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Category Not Found"));
 
-        Category ctg = categories.stream()
-                .filter(c -> c.getCategoryId().equals(CategoryId))
-                .findFirst().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                                                                           "Resource Don't Exist!"));
-
+//        List<Category> categories = repository.findAll();
+//
+//        Category ctg = categories.stream()
+//                .filter(c -> c.getCategoryId().equals(CategoryId))
+//                .findFirst().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+//                                                                           "Resource Don't Exist!"));
 
         repository.deleteById(CategoryId);
         return "Category With ID: %d Deleted Successfully !"
@@ -65,21 +67,14 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Category updateCategory(Category category, Long CategoryId) {
 
-        List<Category> categories = repository.findAll();
+//        Optional<Category> savedCategory = repository.findById(CategoryId);
 
-        Optional<Category> ctg = categories.stream()
-                .filter(c -> c.getCategoryId().equals(CategoryId))
-                .findFirst();
+        Category ctg = repository.findById(CategoryId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category Not Found!"));
 
-
-        if (ctg.isPresent()) {
-            Category existCategory = ctg.get();
-            existCategory.setCategoryName(category.getCategoryName());
-            return repository.save(existCategory);
-
-        } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Category Not Found");
-        }
+        category.setCategoryId(CategoryId);
+        ctg =  repository.save(category);
+        return ctg;
         
     }
 }
