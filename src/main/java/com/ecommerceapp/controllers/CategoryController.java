@@ -62,7 +62,7 @@ public class CategoryController {
 
         try {
             Category savedCtg = categoryService.updateCategory(category, categoryId);
-            return new ResponseEntity<>("Category with categoryId: " + categoryId, HttpStatus.OK);
+            return new ResponseEntity<>("Category with categoryId: " + categoryId + " Updated !", HttpStatus.OK);
 
         } catch(ResponseStatusException ex) {
             return new ResponseEntity<>(ex.getReason(), ex.getStatusCode());

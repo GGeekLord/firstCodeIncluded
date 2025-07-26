@@ -1,0 +1,24 @@
+spring:
+
+  application:
+    name: EcommerceApp
+
+  h2:
+    console:
+      enabled: true
+
+  datasource:
+    url: jdbc:h2:mem:h2Console2025
+    username: sa
+    password: 1234
+    ## the database Driver key-value property will be there here !!
+
+  jpa:
+    show-sql: true
+
+    hibernate:
+      ddl-auto: update
+
+    properties:
+       hibernate:
+         format_sql: true
