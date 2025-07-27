@@ -4,6 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
@@ -18,9 +20,11 @@ public class Category {
 
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY)
-    private Long CategoryId;
+    private Long categoryId;
 
-    private String CategoryName;
+    @NotBlank
+    @Size(min = 5, message = "must be at least 5 character !")
+    private String categoryName;
 
 //    public Category() {
 //    }

@@ -1,16 +1,15 @@
 package com.ecommerceapp.services.implementations;
 
+import com.ecommerceapp.exceptions.APIException;
+import com.ecommerceapp.exceptions.ResourceNotFoundException;
 import com.ecommerceapp.models.Category;
 import com.ecommerceapp.repositories.CategoryRepository;
 import com.ecommerceapp.services.interfaces.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -27,20 +26,36 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<Category> getAllCategories() {
+
+        List<Category> categories = repository.findAll();
+
+        if(categories.isEmpty()) {
+            throw new APIException("No category Created till now !");
+        }
+        
         return repository.findAll();
     }
 
     @Override
     public String createCategory(Category category) {
 
-        List<Category> categories = repository.findAll();
+        Category savedCategory = repository.findByCategoryName(category.getCategoryName());
 
-        Category ctg = categories.stream()
-                .filter(c -> c.getCategoryName().equals(category.getCategoryName()))
-                .findFirst().orElse(null);
+        if(savedCategory != null) {
 
-        if(ctg != null)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Category already exists");
+            throw new APIException("Category with name %s is already exist !"
+                    .formatted(category.getCategoryName()));
+        }
+
+        /// the traditional way for preventing duplication
+//        List<Category> categories = repository.findAll();
+//
+//        Category ctg = categories.stream()
+//                .filter(c -> c.getCategoryName().equals(category.getCategoryName()))
+//                .findFirst().orElse(null);
+//
+//        if(ctg != null)
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Category already exists");
 
         repository.save(category);
         return "Category Added Successfully !";
@@ -50,14 +65,13 @@ public class CategoryServiceImpl implements CategoryService {
     public String deleteCategory(Long CategoryId) {
 
         Category category = repository.findById(CategoryId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Category Not Found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "Id", CategoryId));
 
 //        List<Category> categories = repository.findAll();
 //
 //        Category ctg = categories.stream()
 //                .filter(c -> c.getCategoryId().equals(CategoryId))
-//                .findFirst().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-//                                                                           "Resource Don't Exist!"));
+//                .findFirst().orElseThrow(() -> new ResourceNotFoundException("Category", "Id", CategoryId));
 
         repository.deleteById(CategoryId);
         return "Category With ID: %d Deleted Successfully !"
@@ -70,7 +84,7 @@ public class CategoryServiceImpl implements CategoryService {
 //        Optional<Category> savedCategory = repository.findById(CategoryId);
 
         Category ctg = repository.findById(CategoryId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category Not Found!"));
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "Id", CategoryId));
 
         category.setCategoryId(CategoryId);
         ctg =  repository.save(category);
