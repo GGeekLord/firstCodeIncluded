@@ -32,7 +32,7 @@ public class CategoryServiceImpl implements CategoryService {
         if(categories.isEmpty()) {
             throw new APIException("No category Created till now !");
         }
-        
+
         return repository.findAll();
     }
 

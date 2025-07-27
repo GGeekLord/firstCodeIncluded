@@ -29,44 +29,26 @@ public class CategoryController {
     }
 
 
-
     @PostMapping("/public/categories")
     public ResponseEntity<String> postCategory(@Valid @RequestBody Category category) {
-
-        try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.createCategory(category));
-
-        } catch(ResponseStatusException ex) {
-            return ResponseEntity.status(ex.getStatusCode()).body(ex.getReason());
-        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.createCategory(category));
     }
 
 
     @DeleteMapping("/admin/categories/{categoryId}")
     public ResponseEntity<String> deleteCategory(@PathVariable("categoryId") Long categoryId) {
-
-        try {
-            // return categoryService.deleteCategory(categoryId); --- Older Version !
-            // return ResponseEntity.ok(categoryService.deleteCategory(categoryId));
-            // return ResponseEntity.status(HttpStatus.OK).body(categoryService.deleteCategory(categoryId));
-
-            return new ResponseEntity<>(categoryService.deleteCategory(categoryId), HttpStatus.OK);
-
-        } catch (ResponseStatusException ex) {
-            return new ResponseEntity<>(ex.getReason(), ex.getStatusCode());
-        }
+        return ResponseEntity.status(HttpStatus.OK).body(categoryService.deleteCategory(categoryId));
     }
 
     @PutMapping("/admin/update/{categoryId}")
     public ResponseEntity<String> updateCategory(@RequestBody Category category,
                                                  @PathVariable("categoryId") Long  categoryId) {
 
-        try {
-            Category savedCtg = categoryService.updateCategory(category, categoryId);
-            return new ResponseEntity<>("Category with categoryId: " + categoryId + " Updated !", HttpStatus.OK);
+        Category updatedCategory = categoryService.updateCategory(category, categoryId);
 
-        } catch(ResponseStatusException ex) {
-            return new ResponseEntity<>(ex.getReason(), ex.getStatusCode());
-        }
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("The Category With Id: %s Updated !".formatted(updatedCategory.getCategoryId()));
+
     }
 }
