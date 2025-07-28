@@ -1,6 +1,8 @@
 package com.ecommerceapp.services.interfaces;
 
 import com.ecommerceapp.models.Category;
+import com.ecommerceapp.payload.CategoryDTO;
+import com.ecommerceapp.payload.CategoryResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -8,11 +10,11 @@ import java.util.List;
 
 public interface CategoryService {
 
-    List<Category> getAllCategories();
+    CategoryResponse getAllCategories(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
 
-    String createCategory(Category category);
+    CategoryDTO createCategory(CategoryDTO categoryDTO);
 
-    String deleteCategory(Long CategoryId);
+    CategoryDTO deleteCategory(Long CategoryId);
 
-    Category updateCategory(Category category, Long CategoryId);
+    CategoryDTO updateCategory(CategoryDTO categoryDTO, Long CategoryId);
 }
